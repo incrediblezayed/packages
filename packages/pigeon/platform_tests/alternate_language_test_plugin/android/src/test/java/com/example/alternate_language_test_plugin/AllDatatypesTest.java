@@ -24,16 +24,17 @@ public class AllDatatypesTest {
     if (firstTypes == null || secondTypes == null) {
       return;
     }
+    // Check all the fields individually to ensure that everything is as expected.
     assertEquals(firstTypes.getABool(), secondTypes.getABool());
     assertEquals(firstTypes.getAnInt(), secondTypes.getAnInt());
     assertEquals(firstTypes.getAnInt64(), secondTypes.getAnInt64());
-
     assertEquals(firstTypes.getADouble(), secondTypes.getADouble());
     assertArrayEquals(firstTypes.getAByteArray(), secondTypes.getAByteArray());
     assertArrayEquals(firstTypes.getA4ByteArray(), secondTypes.getA4ByteArray());
     assertArrayEquals(firstTypes.getA8ByteArray(), secondTypes.getA8ByteArray());
     assertTrue(floatArraysEqual(firstTypes.getAFloatArray(), secondTypes.getAFloatArray()));
     assertEquals(firstTypes.getAnEnum(), secondTypes.getAnEnum());
+    assertEquals(firstTypes.getAnotherEnum(), secondTypes.getAnotherEnum());
     assertEquals(firstTypes.getAnObject(), secondTypes.getAnObject());
     assertArrayEquals(firstTypes.getList().toArray(), secondTypes.getList().toArray());
     assertArrayEquals(firstTypes.getStringList().toArray(), secondTypes.getStringList().toArray());
@@ -44,6 +45,10 @@ public class AllDatatypesTest {
         firstTypes.getMap().keySet().toArray(), secondTypes.getMap().keySet().toArray());
     assertArrayEquals(
         firstTypes.getMap().values().toArray(), secondTypes.getMap().values().toArray());
+
+    // Also check that the implementation of equality works.
+    assertEquals(firstTypes, secondTypes);
+    assertEquals(firstTypes.hashCode(), secondTypes.hashCode());
   }
 
   void compareAllNullableTypes(AllNullableTypes firstTypes, AllNullableTypes secondTypes) {
@@ -51,6 +56,7 @@ public class AllDatatypesTest {
     if (firstTypes == null || secondTypes == null) {
       return;
     }
+    // Check all the fields individually to ensure that everything is as expected.
     assertEquals(firstTypes.getANullableBool(), secondTypes.getANullableBool());
     assertEquals(firstTypes.getANullableInt(), secondTypes.getANullableInt());
     assertEquals(firstTypes.getANullableDouble(), secondTypes.getANullableDouble());
@@ -74,6 +80,10 @@ public class AllDatatypesTest {
         firstTypes.getMap().keySet().toArray(), secondTypes.getMap().keySet().toArray());
     assertArrayEquals(
         firstTypes.getMap().values().toArray(), secondTypes.getMap().values().toArray());
+
+    // Also check that the implementation of equality works.
+    assertEquals(firstTypes, secondTypes);
+    assertEquals(firstTypes.hashCode(), secondTypes.hashCode());
   }
 
   @Test
@@ -152,6 +162,8 @@ public class AllDatatypesTest {
 
   @Test
   public void hasValues() {
+    // Not inline due to warnings about an ambiguous varargs call when inline.
+    final Object[] genericList = new Boolean[] {true, false};
     AllTypes allEverything =
         new AllTypes.Builder()
             .setABool(false)
@@ -164,11 +176,12 @@ public class AllDatatypesTest {
             .setA8ByteArray(new long[] {1, 2, 3, 4})
             .setAFloatArray(new double[] {0.5, 0.25, 1.5, 1.25})
             .setAnEnum(CoreTests.AnEnum.ONE)
+            .setAnotherEnum(CoreTests.AnotherEnum.JUST_IN_CASE)
             .setAnObject(0)
             .setBoolList(Arrays.asList(new Boolean[] {true, false}))
             .setDoubleList(Arrays.asList(new Double[] {0.5, 0.25, 1.5, 1.25}))
             .setIntList(Arrays.asList(new Long[] {1l, 2l, 3l, 4l}))
-            .setList(Arrays.asList(new int[] {1, 2, 3, 4}))
+            .setList(Arrays.asList(genericList))
             .setStringList(Arrays.asList(new String[] {"string", "another one"}))
             .setMap(makeMap("hello", 1234))
             .build();
@@ -188,7 +201,7 @@ public class AllDatatypesTest {
             .setBoolList(Arrays.asList(new Boolean[] {true, false}))
             .setDoubleList(Arrays.asList(new Double[] {0.5, 0.25, 1.5, 1.25}))
             .setIntList(Arrays.asList(new Long[] {1l, 2l, 3l, 4l}))
-            .setList(Arrays.asList(new int[] {1, 2, 3, 4}))
+            .setList(Arrays.asList(genericList))
             .setStringList(Arrays.asList(new String[] {"string", "another one"}))
             .setMap(makeMap("hello", 1234))
             .build();
